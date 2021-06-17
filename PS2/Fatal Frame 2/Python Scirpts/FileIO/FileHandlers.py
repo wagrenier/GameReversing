@@ -11,7 +11,8 @@ def cddatIsCmpFile(file_index):
 
 
 def cddatIsFile(file_index):
-    file_status = cd_dat_tbl[hex(p_cd_dat + file_index * 0xc)] & 0b00000011
+    file_status = cd_dat_tbl[hex(GetFile(file_index))] & 0b00000011
+
     if file_status == 0b00:
         return FileStatus.NO_FILE
     elif file_status == 0b10:
@@ -37,11 +38,11 @@ def GetFile(file_index):
 
 
 def GetFileSize(file_index):
-    return GetAlignUp((p_cd_dat + file_index * 0xc + 4), 4)
+    return GetFile(file_index) + 4
 
 
 def GetFileCmpSize(file_index):
-    return GetAlignUp((p_cd_dat + file_index * 0xc + 8), 4)
+    return GetFile(file_index) + 8
 
 
 def GetFileSectorSize(file_index):

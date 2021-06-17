@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+.idea/
+
+PS2/Fatal Frame 2/Python Scirpts/FileIO/output.txt
