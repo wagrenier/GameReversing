@@ -7,6 +7,7 @@ class FileStatus(Enum):
     NO_FILE = 0
     FILE_NOT_COMPRESSED = 2
     FILE_COMPRESSED = 3
+    UNKNOWN_FILE = 4
 
 
 # Define global values

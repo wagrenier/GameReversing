@@ -19,7 +19,7 @@ def cddatIsFile(file_index):
     elif file_status == 0b11:
         return FileStatus.FILE_COMPRESSED
 
-    return FileStatus.NO_FILE
+    return FileStatus.UNKNOWN_FILE
 
 
 

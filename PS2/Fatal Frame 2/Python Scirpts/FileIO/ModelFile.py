@@ -31,5 +31,5 @@ def sgdRemap(sgdFileHeader):
     if (pcVar1 < 0x30000000) and (pcVar1 != 0x0):
         sgdFileHeader.name_ptr = pcVar1 + sgdFileHeader
 
-    if uVar7 == 0:
-        iVar3 = sgdFileHeader->field_0x10;
+    #if uVar7 == 0:
+        #iVar3 = sgdFileHeader->field_0x10;
