@@ -9,10 +9,13 @@ def check_file_type(line_header):
         return 'DXH'
     elif line_header.find(b'LESS') >= 0:
         return 'LESS'
-    elif line_header.find(b'\x00\x00\x01\xBA\x44') >= 0:
+    elif line_header.find(b'\x00\x00\x01\xBA\x44') >= 0 or line_header.find(b'\x6D\xC4\x3B\x4A') >= 0:
         return 'pss'
     elif line_header.find(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00') >= 0:
         return 'str'
+    elif line_header.find(b'\x3F\x63\x3F\x75') >= 0:
+        # 3F 63 3F 75 3F 87 3F 99 3F AB 3F BD 3F CF 3F 00
+        return 'weirdheader'
     else:
         return 'out'
 
@@ -35,9 +38,6 @@ if __name__ == '__main__':
         img_bin.seek(file_extract['BinStartAddr'])
 
         full_buffer = img_bin.read(read_size)
-
-        if full_buffer.find(b'\x00\x00\x01\xBA\x44') >= 0:
-            file_type = 'pss'
 
         file_full_name = f'D:/DecompressFiles/PythonExtract/{file_extract["Id"]}.{file_type}'
         output_file = open(file_full_name, 'wb')

@@ -4,9 +4,10 @@ from FileHandlers import *
 
 def PrintFileInfo(file):
     if DEBUG:
-        file_debug_string = 'Id:{},Type:{},StartAddrLBA:{},FileEndLBA:{},Size:{},SizeCmp:{}\n'.format \
+        file_debug_string = 'Id:{},Type:{},StartSector:{},StartAddrLBA:{},FileEndLBA:{},Size:{},SizeCmp:{}\n'.format \
                 (
-                hex(file['Id']), file['Type'], hex(file['BinStartAddr']), hex(file['BinEndAddr']),
+                hex(file['Id']), file['Type'], hex(file['StartSector']), hex(file['BinStartAddr']),
+                hex(file['BinEndAddr']),
                 hex(file['Size']), hex(file['SizeCmp'])
             )
 
@@ -33,8 +34,15 @@ def extract_file(file_index):
 
     file_bd_addr = compute_img_bin_file_address(file)
 
+    file_start_sector = GetFileStartSector(file_index)
+
     if file_status == FileStatus.FILE_COMPRESSED:
         file_end = file_bd_addr + file_size_cmp
+    elif file_status == FileStatus.NO_FILE:
+        if file_size > file_size_cmp:
+            file_end = file_bd_addr + file_size
+        else:
+            file_end = file_bd_addr + file_size_cmp
     else:
         file_end = file_bd_addr + file_size
 
@@ -42,7 +50,9 @@ def extract_file(file_index):
         {
             'Id': file_index,
             'CdStartAddr': file,
+            'StartSector': file_start_sector,
             'Type': file_status,
+            'CanExtract': True,
             'BinStartAddr': file_bd_addr,
             'BinEndAddr': file_end,
             'Size': file_size,
@@ -67,6 +77,9 @@ def combine_duplicate_file(file_list):
             file_list))
 
         if len(files_to_combine) > 0:
+            for file_not_extract in files_to_combine:
+                file_not_extract['CanExtract'] = False
+
             filtered_list = files_to_combine
             files_to_combine.append(file)
             true_file_end = file
@@ -79,8 +92,7 @@ def combine_duplicate_file(file_list):
                 else:
                     true_file_end = filtered_list[0]
 
-            #{'CombinedFile': true_file_end,'FileList': files_to_combine}
-
+            true_file_end['CanExtract'] = True
             combined_file_list.append(true_file_end)
 
     return combined_file_list
@@ -96,16 +108,19 @@ def build_file_db():
     filtered_file_db = remove_empty_files(file_db)
     combined_files = combine_duplicate_file(file_db)
 
+#or len(list(filter(lambda x: x['BinStartAddr'] >= file['BinStartAddr'] and x['BinEndAddr'] <= file['BinEndAddr'],file_db))) > 0
+
     for file in file_db:
-        #if len(list(filter(lambda x: x['BinStartAddr'] >= file['BinStartAddr'] and x['BinEndAddr'] <= file['BinEndAddr'], file_db))) > 0:
-        #    continue
-        #else:
+        if file['CanExtract'] == False:
+            continue
+
         combined_files.append(file)
 
     for file in combined_files:
         PrintFileInfo(file)
 
     return combined_files
+
 
 def compute_img_bin_file_address(file):
     # Computes the lba for the file, rather than the address within the ISO
