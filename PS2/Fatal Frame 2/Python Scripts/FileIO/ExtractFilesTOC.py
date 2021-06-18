@@ -4,11 +4,11 @@ from FileHandlers import *
 
 def PrintFileInfo(file):
     if DEBUG:
-        file_debug_string = 'Id:{},Type:{},StartAddrLBA:{},FileEndLBA:{},Size:{},SizeCmp:{}\n'.format\
+        file_debug_string = 'Id:{},Type:{},StartAddrLBA:{},FileEndLBA:{},Size:{},SizeCmp:{}\n'.format \
                 (
-                    hex(file['Id']), file['Type'], hex(file['BinStartAddr']), hex(file['BinEndAddr']),
-                    hex(file['Size']), hex(file['SizeCmp'])
-                )
+                hex(file['Id']), file['Type'], hex(file['BinStartAddr']), hex(file['BinEndAddr']),
+                hex(file['Size']), hex(file['SizeCmp'])
+            )
 
         print(file_debug_string)
         debug_output.write(file_debug_string)
@@ -58,10 +58,13 @@ def combine_duplicate_file(file_list):
     combined_file_list = []
 
     for file in file_list:
-        if len(list(filter(lambda x: x['CombinedFile']['BinStartAddr'] == file['BinStartAddr'], combined_file_list))) > 0:
+        if len(list(
+                filter(lambda x: x['BinStartAddr'] == file['BinStartAddr'], combined_file_list))) > 0:
             continue
 
-        files_to_combine = list(filter(lambda x: x['BinStartAddr'] == file['BinStartAddr'] and x['Id'] != file['Id'] and x['Id'] > file['Id'], file_list))
+        files_to_combine = list(filter(
+            lambda x: x['BinStartAddr'] == file['BinStartAddr'] and x['Id'] != file['Id'] and x['Id'] > file['Id'],
+            file_list))
 
         if len(files_to_combine) > 0:
             filtered_list = files_to_combine
@@ -76,29 +79,33 @@ def combine_duplicate_file(file_list):
                 else:
                     true_file_end = filtered_list[0]
 
-            combined_file_list.append({
-                'CombinedFile': true_file_end,
-                'FileList': files_to_combine
-            })
+            #{'CombinedFile': true_file_end,'FileList': files_to_combine}
+
+            combined_file_list.append(true_file_end)
 
     return combined_file_list
 
 
 def build_file_db():
-    files_id = range(0, project_file_num - 1)
+    files_id = range(0, project_file_num)
     file_db = []
 
     for curr_file in files_id:
-        extracted_file = extract_file(curr_file)
-
-        file_db.append(extracted_file)
+        file_db.append(extract_file(curr_file))
 
     filtered_file_db = remove_empty_files(file_db)
-    combined_files = combine_duplicate_file(filtered_file_db)
+    combined_files = combine_duplicate_file(file_db)
 
-    for my_file in file_db:
-        PrintFileInfo(my_file)
+    for file in file_db:
+        #if len(list(filter(lambda x: x['BinStartAddr'] >= file['BinStartAddr'] and x['BinEndAddr'] <= file['BinEndAddr'], file_db))) > 0:
+        #    continue
+        #else:
+        combined_files.append(file)
 
+    for file in combined_files:
+        PrintFileInfo(file)
+
+    return combined_files
 
 def compute_img_bin_file_address(file):
     # Computes the lba for the file, rather than the address within the ISO
