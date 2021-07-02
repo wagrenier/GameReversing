@@ -1,0 +1,32 @@
+# Extract All TIM2 Files
+
+get FULLSIZE asize
+for OFFSET = 0 < FULLSIZE
+	findloc FILE_BEGIN binary "TIM2" "" FULLSIZE
+	
+	if FILE_BEGIN == ""
+		break
+	endif
+	
+	goto FILE_BEGIN
+	
+    savepos OFFSET
+	
+    getdstring SIGN 4
+	get DUMMY long
+    get DUMMY long
+    get DUMMY long
+    get SIZE long
+	
+    math SIZE += 0x10
+	
+    if SIZE == 0
+        math SIZE = 1
+    else
+        log "" OFFSET SIZE
+    endif
+	
+    math OFFSET += SIZE
+	
+    goto OFFSET
+next

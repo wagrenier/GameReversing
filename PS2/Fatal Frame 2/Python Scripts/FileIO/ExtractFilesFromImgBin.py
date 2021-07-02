@@ -45,4 +45,5 @@ if __name__ == '__main__':
         output_file.write(full_buffer)
         output_file.close()
 
-        #.\quickbms -. -F "{}.LESS" scripts/deless.bms D:\DecompressFiles\PythonExtract D:\DecompressFiles\bms\output
+        #.\quickbms -. -F "{}.LESS" scripts/deless.bms D:\DecompressFiles\PythonExtract D:\DecompressFiles\PythonExtract\compressed
+        #.\quickbms -l "D:\Programming\Git\Github\GameReversing\PS2\Fatal Frame 2\QuickBmsScripts\project_zero.bms" "D:\Reverse\Fatal Frame II\Files\SLUS_207.66" "D:\DecompressFiles\bms\output"
