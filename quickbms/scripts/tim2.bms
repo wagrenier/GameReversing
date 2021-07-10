@@ -2,7 +2,7 @@
 
 get FULLSIZE asize
 for OFFSET = 0 < FULLSIZE
-	findloc FILE_BEGIN binary "TIM2" "" FULLSIZE
+	findloc FILE_BEGIN binary "TIM2\x04\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00" "" FULLSIZE
 	
 	if FILE_BEGIN == ""
 		break
@@ -20,7 +20,7 @@ for OFFSET = 0 < FULLSIZE
 	
     math SIZE += 0x10
 	
-    if SIZE == 0
+    if SIZE < 0x11
         math SIZE = 1
     else
         log "" OFFSET SIZE

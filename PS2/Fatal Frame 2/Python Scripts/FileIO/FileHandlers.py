@@ -23,7 +23,6 @@ def cddatIsFile(file_index):
     return FileStatus.UNKNOWN_FILE
 
 
-
 def GetFileData(file_index, param_2):
     # The second parameter might be a file within a file?
     #    iVar2 = GetMenuFileDispFileID(DAT_00404134, (&DAT_00404150)[DAT_00404134 * 3]
