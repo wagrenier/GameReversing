@@ -34,16 +34,3 @@ with open('cd_dat_tbl.json') as f:
 
 with open('file_ext_tbl.json') as f:
     file_ext_dat = json.load(f)
-
-
-def open_file_ext_tbl():
-    with open('file_ext_tbl.json') as f:
-        file_ext_dat = json.load(f)
-
-    return file_ext_dat
-
-def open_cd_dat_tbl():
-    with open('cd_dat_tbl.json') as f:
-        cd_dat_tbl = json.load(f)
-
-    return cd_dat_tbl

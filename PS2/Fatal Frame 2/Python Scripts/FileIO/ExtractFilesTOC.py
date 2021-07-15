@@ -73,6 +73,18 @@ def compute_img_bin_file_address(file):
 
 
 if __name__ == '__main__':
-    #extract_file(0x1064)
-    a = extract_file(0xCD0)
-    # build_file_db()
+    # extract_file(0x1064)
+    # a = extract_file(0xCD0)
+    my_files = build_file_db()
+
+    file_start_sector = 1356108
+    file_check = file_start_sector * sector_size
+
+    img_cd_base = 0x30D40000
+
+    for a_file in my_files:
+        start = img_cd_base + a_file['BinStartAddr']
+        end = img_cd_base + a_file['BinEndAddr']
+        if start <= file_check and end >= file_check:
+            print(a_file['Id'])
+            print(a_file['Type'])
