@@ -105,7 +105,10 @@ def build_file_db():
     for curr_file in files_id:
         file_db.append(extract_file(curr_file))
 
-    filtered_file_db = remove_empty_files(file_db)
+    return file_db
+    #filtered_file_db = remove_empty_files(file_db)
+
+    return filtered_file_db
     combined_files = combine_duplicate_file(file_db)
 
 #or len(list(filter(lambda x: x['BinStartAddr'] >= file['BinStartAddr'] and x['BinEndAddr'] <= file['BinEndAddr'],file_db))) > 0
@@ -128,4 +131,5 @@ def compute_img_bin_file_address(file):
 
 
 if __name__ == '__main__':
-    build_file_db()
+    extract_file(0x1064)
+    #build_file_db()

@@ -6,9 +6,9 @@ from StandardFileOperations.PathOperations import move_and_rename_file, write_bu
 from quickbms.quickbms_handler import *
 
 # Global variables
-img_bin_file_path = 'D:/DecompressFiles/IMG_BD_JP.BIN'
+img_bin_file_path = 'D:/DecompressFiles/IMG_BD_US.BIN'
 
-extraction_folder_path = 'D:/DecompressFiles/Zero2_TOC_Extract_JP'
+extraction_folder_path = 'D:/DecompressFiles/Zero2_TOC_Extract_FULL'
 uncompressed_folder_path = '/uncompressed'
 
 
@@ -26,23 +26,31 @@ def check_file_type(line_header, is_large_header=False):
         return 'DXH'
     elif not is_large_header and line_header.find(b'LESS') >= 0:
         return 'LESS'
-    elif is_large_header and line_header.find(b'\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00') >= 0:
-        return 'mdl'
+    #elif is_large_header and line_header.find(b'\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00') >= 0:
+    #    return 'mdl'
     elif not is_large_header and (
             line_header.find(b'\x00\x00\x01\xBA\x44') >= 0 or line_header.find(b'\x6D\xC4\x3B\x4A') >= 0):
         return 'pss'
     elif not is_large_header and line_header.find(
             b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00') >= 0:
         return 'str'
-    elif not is_large_header and line_header.find(b'\x3F\x63\x3F\x75') >= 0:
+    #elif not is_large_header and line_header.find(b'\x3F\x63\x3F\x75') >= 0:
         # 3F 63 3F 75 3F 87 3F 99 3F AB 3F BD 3F CF 3F 00
-        return 'weirdheader'
+    #    return 'weirdheader'
     else:
         return 'out'
 
 
-def smart_file_type_finder(file_to_analyze):
-    print()
+def smart_file_type_finder(file_id):
+    switcher = {
+        0x2: 'LESS',
+        0x7: 'anm',
+        0xD: 'DXH',
+        0xF: 'pss',
+        0x11: 'pss'
+    }
+
+    return switcher.get(file_id, "out")
 
 
 def extract_file_output(file_to_extract, img_bin):
@@ -54,12 +62,13 @@ def extract_file_output(file_to_extract, img_bin):
     img_bin.seek(file_to_extract['BinStartAddr'])
 
     file_type = check_file_type(img_bin.read(0x10))
+    #file_type = smart_file_type_finder(file_ext_dat[file_to_extract["Id"]])
 
     img_bin.seek(file_to_extract['BinStartAddr'])
 
     full_buffer = img_bin.read(read_size)
 
-    write_buffer_to_file(full_buffer, f'{extraction_folder_path}/{file_type}', f'{file_to_extract["Id"]}.{file_type}')
+    write_buffer_to_file(full_buffer, f'{extraction_folder_path}/{file_type}', f'{file_to_extract["Id"]}_{file_ext_dat[file_to_extract["Id"]]}.{file_type}')
 
 
 def move_decompressed_files():
