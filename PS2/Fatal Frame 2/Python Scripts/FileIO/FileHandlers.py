@@ -33,7 +33,6 @@ def GetFileData(file_index, param_2):
 
 
 def GetFile(file_index):
-    #return GetAlignUp((p_cd_dat + file_index * 0xc), 4)
     return p_cd_dat + file_index * 0xc
 
 

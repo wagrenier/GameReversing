@@ -2,7 +2,7 @@
 from FileHandlers import *
 
 
-def PrintFileInfo(file):
+def print_file_info(file):
     if DEBUG:
         file_debug_string = 'Id:{},Type:{},StartSector:{},StartAddrLBA:{},FileEndLBA:{},Size:{},SizeCmp:{}\n'.format \
                 (
@@ -15,15 +15,13 @@ def PrintFileInfo(file):
         debug_output.write(file_debug_string)
 
 
-"""
-For each file:
-* 4 byte - LBA
-* 4 byte - unpack file size
-* 4 byte - file size in archive
-"""
-
-
 def extract_file(file_index):
+    """
+    For each file:
+    * 4 byte - LBA
+    * 4 byte - unpack file size
+    * 4 byte - file size in archive
+    """
     file = cd_dat_tbl[hex(GetFile(file_index))]
 
     file_status = cddatIsFile(file_index)
@@ -52,50 +50,11 @@ def extract_file(file_index):
             'CdStartAddr': file,
             'StartSector': file_start_sector,
             'Type': file_status,
-            'CanExtract': True,
             'BinStartAddr': file_bd_addr,
             'BinEndAddr': file_end,
             'Size': file_size,
             'SizeCmp': file_size_cmp
         }
-
-
-def remove_empty_files(file_list):
-    return list(filter(lambda x: x['Type'] != FileStatus.NO_FILE, file_list))
-
-
-def combine_duplicate_file(file_list):
-    combined_file_list = []
-
-    for file in file_list:
-        if len(list(
-                filter(lambda x: x['BinStartAddr'] == file['BinStartAddr'], combined_file_list))) > 0:
-            continue
-
-        files_to_combine = list(filter(
-            lambda x: x['BinStartAddr'] == file['BinStartAddr'] and x['Id'] != file['Id'] and x['Id'] > file['Id'],
-            file_list))
-
-        if len(files_to_combine) > 0:
-            for file_not_extract in files_to_combine:
-                file_not_extract['CanExtract'] = False
-
-            filtered_list = files_to_combine
-            files_to_combine.append(file)
-            true_file_end = file
-
-            while len(filtered_list) > 0:
-                filtered_list = list(filter(lambda x: x['BinEndAddr'] > true_file_end['BinEndAddr'], filtered_list))
-
-                if len(filtered_list) == 0:
-                    break
-                else:
-                    true_file_end = filtered_list[0]
-
-            true_file_end['CanExtract'] = True
-            combined_file_list.append(true_file_end)
-
-    return combined_file_list
 
 
 def build_file_db():
@@ -106,23 +65,6 @@ def build_file_db():
         file_db.append(extract_file(curr_file))
 
     return file_db
-    #filtered_file_db = remove_empty_files(file_db)
-
-    return filtered_file_db
-    combined_files = combine_duplicate_file(file_db)
-
-#or len(list(filter(lambda x: x['BinStartAddr'] >= file['BinStartAddr'] and x['BinEndAddr'] <= file['BinEndAddr'],file_db))) > 0
-
-    for file in file_db:
-        if file['CanExtract'] == False:
-            continue
-
-        combined_files.append(file)
-
-    for file in combined_files:
-        PrintFileInfo(file)
-
-    return combined_files
 
 
 def compute_img_bin_file_address(file):
@@ -131,5 +73,6 @@ def compute_img_bin_file_address(file):
 
 
 if __name__ == '__main__':
-    extract_file(0x1064)
-    #build_file_db()
+    #extract_file(0x1064)
+    a = extract_file(0xCD0)
+    # build_file_db()
