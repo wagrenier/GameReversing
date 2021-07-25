@@ -24,14 +24,17 @@ img_hd = 'IMG_HD.BIN'
 img_bd = 'IMG_BD.BIN'
 
 # USA = 0x769, JP = 0x73A, EU = 0x879
-num_file = 0x73A
+num_file = 0x769
 
-folder = 'D:/DecompressFiles/Fatal Frame Undub/Japan'
+folder = 'D:/DecompressFiles/Fatal Frame Undub/USA'
 
 img_hd_file = open(f'{folder}/{img_hd}', 'rb')
 img_bd_file = open(f'{folder}/{img_bd}', 'rb')
 
 file_id = 0
+
+audio_start_index_us = 1350
+audio_start_index_jp = 1303
 
 while file_id < num_file:
     file_lba = int.from_bytes(img_hd_file.read(0x4), byteorder='little', signed=False)
