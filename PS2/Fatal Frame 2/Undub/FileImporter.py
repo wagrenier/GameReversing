@@ -9,7 +9,7 @@ import subprocess
 # Constants
 # toc location 0x1F40B8 in elf
 # toc location 0x2F90B8 in iso
-elf_toc_offset = 0x1F40B8
+elf_toc_offset = 0x2F90B8 #0x1F40B8
 img_bin_start_address_in_iso_us = 0x30D40000
 
 
@@ -31,11 +31,11 @@ def adjust_file_address_to_in_iso(address):
 
 
 def extract_needed_things():
-    extract_db_file_from_jp_iso(f'{data_folder}', jp_iso_file_name)
-    extract_all_files_from_iso(f'{data_folder}', us_iso_file_name)
+    #extract_db_file_from_jp_iso(f'{data_folder}', jp_iso_file_name)
+    #extract_all_files_from_iso(f'{data_folder}', us_iso_file_name)
 
-    img_bin_us = open(f'{data_folder}/img_bd.bin', 'rb+')
-    us_elf = open(f'{data_folder}/slus_207.66', 'rb+')
+    img_bin_us = open(f'{data_folder}/ff2_us.iso', 'rb+')
+    #us_elfus_elf = open(f'{data_folder}/slus_207.66', 'rb+')
 
     img_bin_jp = open(f'{data_folder}/JP/IMG_BD.BIN', 'rb')
 
@@ -58,24 +58,23 @@ def extract_needed_things():
                 img_bin_jp.seek(convert_file['BinStartAddr'])
                 jp_file_buffer = img_bin_jp.read(convert_file['Size'])
 
-                file_start_address_iso = adjust_file_address_to_in_iso(convert_file['BinStartAddr'])
-
+                file_start_address_iso = adjust_file_address_to_in_iso(current_us_file['BinStartAddr'])
                 img_bin_us.seek(file_start_address_iso)
                 img_bin_us.write(jp_file_buffer)
 
                 if convert_file['Size'] < current_us_file['Size']:
-                    write_file_new_size(us_elf, curr_file_id, convert_file['Size'])
+                    write_file_new_size(img_bin_us, curr_file_id, convert_file['Size'])
 
     img_bin_us.close()
     #mg_bin_us = open(f'{data_folder}/img_bd.bin', 'ab+')
 
-    for convert_file in jp_file_db.file_table:
-        if convert_file['FileExtension'] == 'pss' or convert_file['FileExtension'] == 'str':
-            curr_file_id = convert_file['Id']
-            current_us_file = us_file_db.get_file_from_index(curr_file_id)
+    #for convert_file in jp_file_db.file_table:
+    #    if convert_file['FileExtension'] == 'pss' or convert_file['FileExtension'] == 'str':
+    #        curr_file_id = convert_file['Id']
+    #        current_us_file = us_file_db.get_file_from_index(curr_file_id)
 
-            if convert_file['Size'] > current_us_file['Size']:
-                print(f'Undubbing file {curr_file_id} of type {convert_file["FileExtension"]}')
+    #        if convert_file['Size'] > current_us_file['Size']:
+    #            print(f'Undubbing file {curr_file_id} of type {convert_file["FileExtension"]}')
 
                 #img_bin_jp.seek(convert_file['BinStartAddr'])
                 #jp_file_buffer = img_bin_jp.read(convert_file['Size'])
@@ -88,9 +87,9 @@ def extract_needed_things():
                 #write_file_new_size(us_elf, curr_file_id, convert_file['Size'])
                 #write_file_new_address(us_elf, curr_file_id, current_buffer_address, convert_file['Type'].value)
 
-    img_bin_jp.close()
+    #img_bin_jp.close()
     #img_bin_us.close()
-    us_elf.close()
+    #us_elf.close()
 
 
 # For now, only import files that are smaller or equal in the japanese dub, and audio files
@@ -100,8 +99,8 @@ if __name__ == '__main__':
     us_iso_file_name = 'ff2_us.iso'
     jp_iso_file_name = 'ff2_jp.iso'
 
-    #extract_needed_things()
+    extract_needed_things()
     #patch_iml(f'{data_folder}')
     #auto_patch(f'{data_folder}/img_bd.bin', f'{data_folder}/ff2.ims')
-    os.chdir(f'{data_folder}')
-    subprocess.run([f'iml2iso.exe', f'ff2.iml', f'ff2.iso'])
+    #os.chdir(f'{data_folder}')
+    #subprocess.run([f'iml2iso.exe', f'ff2.iml', f'ff2.iso'])

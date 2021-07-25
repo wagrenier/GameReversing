@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # a = extract_file(0xCD0)
     my_files = build_file_db()
 
-    file_start_sector = 819162740
+    file_start_sector = 1368636
     file_check = file_start_sector * sector_size
 
     img_cd_base = 0x30D40000
