@@ -15,24 +15,35 @@ iso_img_bd_bin_start_address = 0x384A7800  # 0x2083A000
 img_iso_us = open(f'{folder_us}/ffeu.iso', 'rb+')
 
 img_hd_file_us = open(f'{folder_us}/{img_hd}', 'rb')
-img_bd_file_us = open(f'{folder_us}/{img_bd}', 'rb')
 
 img_hd_file_jp = open(f'{folder_jp}/{img_hd}', 'rb')
 img_bd_file_jp = open(f'{folder_jp}/{img_bd}', 'rb')
 
 file_id = 0
 
-audio_start_index_us = 1622  # 1350
+audio_start_index_us = 1622
 audio_start_index_jp = 1303
 
 audio_delta = audio_start_index_us - audio_start_index_jp
 
 while file_id < num_file:
-    if file_id < audio_start_index_us or file_id == num_file - 1:
+    if file_id == 1062:
+        file_id_jp = 743
+    elif file_id == 1063:
+        file_id_jp = 744
+    elif file_id == 1064:
+        file_id_jp = 745
+    elif file_id == 1065:
+        file_id_jp = 746
+    elif file_id == 1066:
+        file_id_jp = 747
+    elif file_id == 1067:
+        file_id_jp = 748
+    elif file_id < audio_start_index_us or file_id == num_file - 1:
         file_id += 1
         continue
-
-    file_id_jp = file_id - audio_delta
+    else:
+        file_id_jp = file_id - audio_delta
 
     img_hd_file_us.seek(file_id * 0x8)
     file_lba_us = int.from_bytes(img_hd_file_us.read(0x4), byteorder='little', signed=False)
@@ -62,8 +73,7 @@ while file_id < num_file:
     file_id += 1
 
 img_hd_file_us.close()
-img_bd_file_us.close()
+img_iso_us.close()
 
 img_hd_file_jp.close()
 img_bd_file_jp.close()
-img_iso_us.close()
