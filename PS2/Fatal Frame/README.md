@@ -1,6 +1,12 @@
 # Fatal Frame
 
 ## EU
+### Subtitles
+* The arrays `subtitles####` contain the `int` values in order of their required subtitle ID
+* `subtitles_sys[12]`@`002af454` seems to be ID of the current subtitle to be displayed
+* `Address` of the first sentence in the first cinematic `0x86AFDF`
+* Find the sentences through the method `int GetStrWidthMain(byte *text,long param_2)`
+
 ### Language
 
 Selected language is located at `0x0025605C`
