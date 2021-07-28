@@ -26,15 +26,17 @@ img_bd = 'IMG_BD.BIN'
 # USA = 0x769, JP = 0x73A, EU = 0x879
 num_file = 0x769
 
-folder = 'D:/DecompressFiles/Fatal Frame Undub/USA'
+folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
 
 img_hd_file = open(f'{folder}/{img_hd}', 'rb')
-img_bd_file = open(f'{folder}/{img_bd}', 'rb')
+#img_bd_file = open(f'{folder}/{img_bd}', 'rb')
 
 file_id = 0
 
 audio_start_index_us = 1350
 audio_start_index_jp = 1303
+
+file_start_address_find = 0x278FD0
 
 while file_id < num_file:
     file_lba = int.from_bytes(img_hd_file.read(0x4), byteorder='little', signed=False)
@@ -42,22 +44,25 @@ while file_id < num_file:
     file_start_address = file_lba * 0x800
     file_end_address = file_start_address + file_size
 
-    img_bd_file.seek(file_start_address)
-    header_buffer = img_bd_file.read(0xF)
+    if file_start_address <= file_start_address_find <= file_end_address:
+        print(
+            f'File ID: {file_id}, File LBA: {file_lba}, File Size: {file_size}, File Start: {file_start_address}, File End: {file_end_address}')
 
-    img_bd_file.seek(file_start_address)
-    full_buffer = img_bd_file.read(file_size)
+    #img_bd_file.seek(file_start_address)
+    #header_buffer = img_bd_file.read(0xF)
 
-    extension = find_file_type(header_buffer)
+    #img_bd_file.seek(file_start_address)
+    #full_buffer = img_bd_file.read(file_size)
 
-    write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
+    #extension = find_file_type(header_buffer)
 
-    print(
-        f'File ID: {file_id}, File LBA: {file_lba}, File Size: {file_size}, File Start: {file_start_address}, File End: {file_end_address}')
+    #write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
+
+
     file_id += 1
 
 img_hd_file.close()
-img_bd_file.close()
+#img_bd_file.close()
 
 
 

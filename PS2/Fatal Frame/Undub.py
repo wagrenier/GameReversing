@@ -27,7 +27,9 @@ audio_start_index_jp = 1303
 audio_delta = audio_start_index_us - audio_start_index_jp
 
 while file_id < num_file:
-    if file_id == 1062:
+    if file_id == 40:
+        file_id_jp = 20
+    elif file_id == 1062:
         file_id_jp = 743
     elif file_id == 1063:
         file_id_jp = 744
