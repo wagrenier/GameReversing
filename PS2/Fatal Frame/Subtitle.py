@@ -61,30 +61,40 @@ def convert_characters(character):
         0x8E: b'-',
         0x8F: b'?',
         0x95: b',',
-        0x96: b'!',
+        0x96: b'.',
         0xFE: b'\n'
         # 0xFF: b'' -> End of string
     }
 
-    return switcher.get(character, b'\x00')
+    return switcher.get(character, b'LL')
 
 
 if __name__ == '__main__':
-    file_id = 41
+    file_id = 40
+    sub = ['en', 'fr', 'de', 'es', 'it']
     folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE/extract'
 
-    file_fill_path = f'{folder}/{file_id}.out'
+    files = [0, 1, 2, 3, 4]
 
-    subtitle_file = open(file_fill_path, 'rb')
-    subtitle_file_extract = open(f'{folder}/subtitles_fr.bin', 'wb+')
+    for file in files:
+        curr_file = file + file_id
+        file_fill_path = f'{folder}/{curr_file}.out'
 
-    while 1:
-        byte_s = subtitle_file.read(1)
-        if not byte_s:
-            break
+        subtitle_file = open(file_fill_path, 'rb')
+        subtitle_file_extract = open(f'{folder}/subtitles_{sub[file]}.bin', 'wb+')
 
-        char_to_write = convert_characters(int.from_bytes(byte_s, "little"))
-        subtitle_file_extract.write(char_to_write)
+        while 1:
+            byte_s = subtitle_file.read(1)
+            if not byte_s:
+                break
 
-    subtitle_file.close()
-    subtitle_file_extract.close()
+            char_to_write = convert_characters(int.from_bytes(byte_s, "little"))
+
+            if char_to_write == b'LL':
+                char_to_write = byte_s
+            subtitle_file_extract.write(char_to_write)
+
+        subtitle_file.close()
+        subtitle_file_extract.close()
+
+
