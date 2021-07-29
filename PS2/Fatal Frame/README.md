@@ -8,8 +8,19 @@
 
 #### Subtitle Files
 * English -> `40`
+  
+Already contains the appropriate info, the following bytes need to be patched with :
+SetSubtitles 	-> `0x257310` -> `0x10`
+MakeMovMes 		-> `0x257118` -> `0x14` 
+DrawMovMes 		-> `0x257150` -> `0x14`
+SendFontText	-> `0x261BB3` (ALREADY GOOD BYTE POS)
+
+
 * French -> `41`
-  * Offset: `0x20FD0`
+  * Subtitles Index Start -> `0x20B95`, Reads as 0x2 bytes
+    * `0x20000` + `[(byte[1] - 0x40)byte[0]]` = Address in file of subtitle
+    * Skip next 2 bytes `0x42 0x20`
+    * Ends at `0x20FD1`
 * Deutsch -> `42`
 * Spanish -> `43`
 * Italian -> `44`

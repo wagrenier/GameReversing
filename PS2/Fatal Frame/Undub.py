@@ -1,4 +1,5 @@
 import struct
+import glob
 
 img_hd = 'IMG_HD.BIN'
 img_bd = 'IMG_BD.BIN'
@@ -8,6 +9,11 @@ num_file = 0x879
 
 folder_jp = 'D:/DecompressFiles/Fatal Frame Undub/Japan'
 folder_us = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
+
+print(glob.glob(f'{folder_jp}/Movie/*'))
+print(glob.glob(f'{folder_jp}/Movie2/*'))
+
+exit(1)
 
 iso_img_hd_bin_start_address = 0xA63000    # 0x20836000
 iso_img_bd_bin_start_address = 0x384A7800  # 0x2083A000
