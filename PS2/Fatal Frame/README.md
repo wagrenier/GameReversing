@@ -10,10 +10,10 @@
 * English -> `40`
   
 Already contains the appropriate info, the following bytes need to be patched with :
-SetSubtitles 	-> `0x257310` -> `0x10`
-MakeMovMes 		-> `0x257118` -> `0x14` 
-DrawMovMes 		-> `0x257150` -> `0x14`
-SendFontText	-> `0x261BB3` (ALREADY GOOD BYTE POS)
+SetSubtitles 	-> `0x257313` -> `0x10`
+MakeMovMes 		-> `0x25711B` -> `0x14` 
+DrawMovMes 		-> `0x257153` -> `0x14`
+SendFontText	-> `0x261BB3` -> `0x14`
 
 
 * French -> `41`
