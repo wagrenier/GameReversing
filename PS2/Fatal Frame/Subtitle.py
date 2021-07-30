@@ -53,6 +53,16 @@ def convert_characters(character):
         0x32: b'x',
         0x33: b'y',
         0x34: b'z',
+        0x3F: b'0',
+        0x40: b'1',
+        0x41: b'2',
+        0x42: b'3',
+        0x43: b'4',
+        0x44: b'5',
+        0x45: b'6',
+        0x46: b'7',
+        0x47: b'8',
+        0x48: b'9',
         # 0x53: b'è',
         # 0x54: b'é',
         # 0x55: b'ê',
@@ -63,7 +73,7 @@ def convert_characters(character):
         0x95: b',',
         0x96: b'.',
         0xFE: b'\n'
-        # 0xFF: b'' -> End of string
+        #0xFF: b'FF'  # -> End of string
     }
 
     return switcher.get(character, b'LL')
