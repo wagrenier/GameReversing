@@ -7,17 +7,17 @@ folder_jp = 'D:/DecompressFiles/Fatal Frame Undub/Japan'
 folder_eu = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
 
 
-def extract_all_files_from_iso(folder, iso_file_name):
+def undub_pss(folder, iso_file_name):
     iso = pycdlib.PyCdlib()
 
     iso.open(f'{folder}/{iso_file_name}')
 
-    aa = ['MOVIE', 'MOVIE2']
+    movies = ['MOVIE', 'MOVIE2']
 
     file_no = 0
     file_not_undub = 0
 
-    for x in aa:
+    for x in movies:
         for child in iso.list_children(iso_path=f'/{x}'):
             if child.file_identifier() == b'.' or child.file_identifier() == b'..':
                 continue
@@ -40,7 +40,7 @@ def extract_all_files_from_iso(folder, iso_file_name):
                 iso_target.close()
 
                 if size_jp <= size_eu:
-                    print(f'File: {iso_file}, Offset: {offset_eu}, Offset JP: {offset_jp}, Size: {size_eu}, Size Jp: P{size_jp}')
+                    print(f'File: {iso_file}, Offset: {offset_eu}, Offset JP: {offset_jp}, Size: {size_eu}, Size Jp: {size_jp}')
                     iso_target = open(f'{folder_eu}/ffeu.iso', 'rb+')
                     iso_target.seek(offset_eu)
                     iso_target.write(buffer)
@@ -55,4 +55,4 @@ def extract_all_files_from_iso(folder, iso_file_name):
 
 
 if __name__ == '__main__':
-    extract_all_files_from_iso(folder_jp, 'ff_jp.iso')
+    undub_pss(folder_jp, 'ff_jp.iso')
