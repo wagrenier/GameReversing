@@ -44,19 +44,17 @@ while file_id < num_file:
     file_start_address = file_lba * 0x800
     file_end_address = file_start_address + file_size
 
-    if file_start_address <= file_start_address_find <= file_end_address:
-        print(
-            f'File ID: {file_id}, File LBA: {file_lba}, File Size: {file_size}, File Start: {file_start_address}, File End: {file_end_address}')
+    print(
+        f'File ID: {file_id}, File LBA: {file_lba}, File Size: {file_size}, File Start: {file_start_address}, File End: {file_end_address}')
+    #img_bd_file.seek(file_start_address)
+    #header_buffer = img_bd_file.read(0xF)
 
-    img_bd_file.seek(file_start_address)
-    header_buffer = img_bd_file.read(0xF)
+    #img_bd_file.seek(file_start_address)
+    #full_buffer = img_bd_file.read(file_size)
 
-    img_bd_file.seek(file_start_address)
-    full_buffer = img_bd_file.read(file_size)
+    #extension = find_file_type(header_buffer)
 
-    extension = find_file_type(header_buffer)
-
-    write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
+    #write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
 
 
     file_id += 1
