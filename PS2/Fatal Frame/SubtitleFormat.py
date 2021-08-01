@@ -1,11 +1,97 @@
 import json
+import struct
 
-file_id = 40
-subtitle_index_offset = 0x1EA13
+transcribe_real = {}
+
 iso_name = 'ffeu.iso'
 folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
+
+file_subtitle = 40
+
+subtitle_index_offset = 0x1EA13
+subtitle_text_offset = 0x1ED97
+subtitle_overall_offset = 0x0
 iso_img_hd_bin_start_address = 0xA63000    # 0x20836000
 iso_img_bd_bin_start_address = 0x384A7800
+
+with open('transcribe_real.json') as f:
+    transcribe_real = json.load(f)
+
+
+def convert_char_to_font(char):
+    switcher = {
+        ord(' '): b'\x00',
+        ord('A'): b'\x01',
+        ord('B'): b'\x02',
+        ord('C'): b'\x03',
+        ord('D'): b'\x04',
+        ord('E'): b'\x05',
+        ord('F'): b'\x06',
+        ord('G'): b'\x07',
+        ord('H'): b'\x08',
+        ord('I'): b'\x09',
+        ord('J'): b'\x0A',
+        ord('K'): b'\x0B',
+        ord('L'): b'\x0C',
+        ord('M'): b'\x0D',
+        ord('N'): b'\x0E',
+        ord('O'): b'\x0F',
+        ord('P'): b'\x10',
+        ord('Q'): b'\x11',
+        ord('R'): b'\x12',
+        ord('S'): b'\x13',
+        ord('T'): b'\x14',
+        ord('U'): b'\x15',
+        ord('V'): b'\x16',
+        ord('W'): b'\x17',
+        ord('X'): b'\x18',
+        ord('Y'): b'\x19',
+        ord('Z'): b'\x1A',
+        ord('a'): b'\x1B',
+        ord('b'): b'\x1C',
+        ord('c'): b'\x1D',
+        ord('d'): b'\x1E',
+        ord('e'): b'\x1F',
+        ord('f'): b'\x20',
+        ord('g'): b'\x21',
+        ord('h'): b'\x22',
+        ord('i'): b'\x23',
+        ord('j'): b'\x24',
+        ord('k'): b'\x25',
+        ord('l'): b'\x26',
+        ord('m'): b'\x27',
+        ord('n'): b'\x28',
+        ord('o'): b'\x29',
+        ord('p'): b'\x2A',
+        ord('q'): b'\x2B',
+        ord('r'): b'\x2C',
+        ord('s'): b'\x2D',
+        ord('t'): b'\x2E',
+        ord('u'): b'\x2F',
+        ord('v'): b'\x30',
+        ord('w'): b'\x31',
+        ord('x'): b'\x32',
+        ord('y'): b'\x33',
+        ord('z'): b'\x34',
+        ord('0'): b'\x3F',
+        ord('1'): b'\x40',
+        ord('2'): b'\x41',
+        ord('3'): b'\x42',
+        ord('4'): b'\x43',
+        ord('5'): b'\x44',
+        ord('6'): b'\x45',
+        ord('7'): b'\x46',
+        ord('8'): b'\x47',
+        ord('9'): b'\x48',
+        ord('\''): b'\x8B',
+        ord('-'): b'\x8E',
+        ord('?'): b'\x8F',
+        ord(','): b'\x95',
+        ord('.'): b'\x96',
+        ord('\n'): b'\xFE'
+    }
+
+    return switcher.get(ord(char), b'')
 
 
 def convert_characters(character):
@@ -89,14 +175,63 @@ def convert_characters(character):
     return switcher.get(character, b'LL')
 
 
-def seek_file(fileId, file_offset):
-    iso_file.seek(iso_img_hd_bin_start_address + (fileId * 0x8))
+def insert_newline(string, index):
+    return string[:index] + '\n' + string[index:]
+
+
+def line_split_string(subtitle):
+    str_len = len(subtitle)
+
+    if str_len < 25:
+        return subtitle
+
+    newline_insert_index = subtitle.find(' ', 25)
+
+    if newline_insert_index < 0:
+        return subtitle
+
+    return insert_newline(subtitle, newline_insert_index)
+
+
+def write_string(subtitle_id, string_byte):
+    seek_subtitle_text(subtitle_id)
+    curr_byte = b''
+    overall_offset = 0x0
+
+    string_byte = line_split_string(string_byte)
+
+    for curr_byte in string_byte:
+        write_char = convert_char_to_font(curr_byte)
+        iso_file.write(write_char)
+        overall_offset += 1
+
+    iso_file.write(b'\xFF')
+    overall_offset += 1
+
+    return overall_offset
+
+
+def seek_file(file_id, file_offset):
+    iso_file.seek(iso_img_hd_bin_start_address + (file_id * 0x8))
     file_start_address_us = int.from_bytes(iso_file.read(0x4), byteorder='little', signed=False) * 0x800
     iso_file.seek(iso_img_bd_bin_start_address + file_start_address_us + file_offset)
 
 
-def read_string(fileId, file_offset):
-    seek_file(fileId, file_offset)
+def seek_subtitle_address_index(subtitle_id):
+    seek_file(file_subtitle, subtitle_id * 0x4 + subtitle_index_offset)
+
+
+def read_subtitle_address_index(subtitle_id):
+    seek_subtitle_address_index(subtitle_id)
+    return int.from_bytes(iso_file.read(0x4), byteorder="little", signed=False)
+
+
+def seek_subtitle_text(subtitle_id):
+    seek_file(file_subtitle, subtitle_text_offset + subtitle_overall_offset)
+
+
+def read_string(subtitle_id):
+    seek_subtitle_text(subtitle_id)
     curr_byte = b''
 
     while 1:
@@ -104,7 +239,7 @@ def read_string(fileId, file_offset):
         if not byte_s:
             break
 
-        char_to_write = convert_characters(int.from_bytes(byte_s, "little"))
+        char_to_write = convert_characters(int.from_bytes(byte_s, 'little'))
 
         if char_to_write == b'LL':
             char_to_write = byte_s
@@ -115,39 +250,34 @@ def read_string(fileId, file_offset):
     return curr_byte
 
 
-def get_subtitle_start_offset():
-    curr_pos = iso_file.tell()
-    seek_file(file_id, 0x0)
+def write_subtitle_file_address(subtitle_id, address):
+    seek_subtitle_address_index(subtitle_id)
+    iso_file.write(struct.pack('<I', address))
 
-    return curr_pos - iso_file.tell()
+
+def patch_subtitles():
+    iso_file.seek(0x257313)
+    iso_file.write(b'\x10')
+    iso_file.seek(0x25711B)
+    iso_file.write(b'\x14')
+    iso_file.seek(0x257153)
+    iso_file.write(b'\x14')
+    iso_file.seek(0x261BB3)
+    iso_file.write(b'\x14')
 
 
 if __name__ == '__main__':
-    iso_file = open(f'{folder}/{iso_name}', 'rb')
-
-    file_db = []
+    iso_file = open(f'{folder}/{iso_name}', 'rb+')
+    patch_subtitles()
 
     for file_index in range(0, 225):
+        text_inject = transcribe_real[file_index]['Text']
+        write_subtitle_file_address(file_index, subtitle_overall_offset + subtitle_text_offset)
+        initial_offset = read_subtitle_address_index(file_index)
+        subtitle_text = read_string(file_index)
+        string_offset = write_string(file_index, text_inject)
+        subtitle_overall_offset += string_offset
 
-        seek_file(file_id, subtitle_index_offset + (file_index * 0x4))
+        print(f'Subtitle Id: {file_index}, Offset: {hex(initial_offset)}, Text Read: {subtitle_text}, Text Write: {text_inject}, Str len: {hex(len(text_inject))}, {hex(subtitle_overall_offset + subtitle_text_offset - initial_offset)}, Tot: {hex(subtitle_overall_offset + subtitle_text_offset)}')
 
-        offset = int.from_bytes(iso_file.read(0x4), byteorder='little', signed=False)
-        string_read = read_string(file_id, offset)
-        nex_offset = get_subtitle_start_offset()
-        print(f'ID: {file_index}, {string_read}, curr off: {offset}, next off: {nex_offset}')
-
-        file = {
-            'Id': file_index,
-            'TextId': string_read.decode('utf-8'),
-            'Text': ''
-        }
-
-        file_db.append(file)
-
-    print(file_db)
-
-    f = open('transcribe.json', 'w')
-    json.dump(file_db, f, indent=6)
-
-    f.close()
     iso_file.close()

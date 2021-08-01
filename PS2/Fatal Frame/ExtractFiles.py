@@ -29,7 +29,7 @@ num_file = 0x769
 folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
 
 img_hd_file = open(f'{folder}/{img_hd}', 'rb')
-#img_bd_file = open(f'{folder}/{img_bd}', 'rb')
+img_bd_file = open(f'{folder}/{img_bd}', 'rb')
 
 file_id = 0
 
@@ -48,15 +48,15 @@ while file_id < num_file:
         print(
             f'File ID: {file_id}, File LBA: {file_lba}, File Size: {file_size}, File Start: {file_start_address}, File End: {file_end_address}')
 
-    #img_bd_file.seek(file_start_address)
-    #header_buffer = img_bd_file.read(0xF)
+    img_bd_file.seek(file_start_address)
+    header_buffer = img_bd_file.read(0xF)
 
-    #img_bd_file.seek(file_start_address)
-    #full_buffer = img_bd_file.read(file_size)
+    img_bd_file.seek(file_start_address)
+    full_buffer = img_bd_file.read(file_size)
 
-    #extension = find_file_type(header_buffer)
+    extension = find_file_type(header_buffer)
 
-    #write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
+    write_buffer_to_file(full_buffer, f'{folder}/extract', f'{file_id}.{extension}')
 
 
     file_id += 1
