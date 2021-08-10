@@ -4,17 +4,19 @@ import struct
 transcribe_real = {}
 
 iso_name = 'ffeu.iso'
-folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE'
+
+# Be sure to insert the name with forward slash '/' and not backward slash '\'
+folder = 'PUT IN HERE THE FOLDER THAT CONTAINS THE ISO'
 
 file_subtitle = 40
 
-subtitle_index_offset = 0x1EA13
-subtitle_text_offset = 0x1ED97
+subtitle_index_offset = 0x1EA13 # 0x1EA13, 0x20B95
+subtitle_text_offset = 0x1ED97 #0x1ED97, 0x20FD1
 subtitle_overall_offset = 0x0
 iso_img_hd_bin_start_address = 0xA63000    # 0x20836000
 iso_img_bd_bin_start_address = 0x384A7800
 
-with open('transcribe_real.json') as f:
+with open(f'{folder}/transcribe_real.json') as f:
     transcribe_real = json.load(f)
 
 
@@ -234,11 +236,13 @@ def read_string(subtitle_id):
     seek_subtitle_text(subtitle_id)
     curr_byte = b''
 
+    aaa = 0
+
     while 1:
         byte_s = iso_file.read(1)
         if not byte_s:
             break
-
+        aaa += 1
         char_to_write = convert_characters(int.from_bytes(byte_s, 'little'))
 
         if char_to_write == b'LL':
@@ -247,7 +251,7 @@ def read_string(subtitle_id):
             break
         curr_byte = curr_byte + char_to_write
 
-    return curr_byte
+    return [curr_byte, aaa]
 
 
 def write_subtitle_file_address(subtitle_id, address):
@@ -270,14 +274,27 @@ if __name__ == '__main__':
     iso_file = open(f'{folder}/{iso_name}', 'rb+')
     patch_subtitles()
 
-    for file_index in range(0, 225):
-        text_inject = transcribe_real[file_index]['Text']
-        write_subtitle_file_address(file_index, subtitle_overall_offset + subtitle_text_offset)
-        initial_offset = read_subtitle_address_index(file_index)
-        subtitle_text = read_string(file_index)
-        string_offset = write_string(file_index, text_inject)
-        subtitle_overall_offset += string_offset
+    file_db = []
 
-        print(f'Subtitle Id: {file_index}, Offset: {hex(initial_offset)}, Text Read: {subtitle_text}, Text Write: {text_inject}, Str len: {hex(len(text_inject))}, {hex(subtitle_overall_offset + subtitle_text_offset - initial_offset)}, Tot: {hex(subtitle_overall_offset + subtitle_text_offset)}')
+    for file_index in range(0, 271):
+        if file_index < 271:
+            text_inject = transcribe_real[file_index]['Text']
+            write_subtitle_file_address(file_index, subtitle_overall_offset + subtitle_text_offset)
+            initial_offset = read_subtitle_address_index(file_index)
+            subtitle_text, string_offset_read = read_string(file_index)
+            string_offset = write_string(file_index, text_inject)
+            subtitle_overall_offset += string_offset
+            subtitle_text = subtitle_text.decode("utf-8")
+        else:
+            subtitle_text = f'SUBTITLE-ID-{file_index}'
+
+        #file_db.append({
+        #    "Id": file_index,
+        #    "TextId": subtitle_text,
+        #    "Text": subtitle_text
+        #})
+        #print(f'Subtitle Id: {file_index}, Offset: {hex(initial_offset)}, Text Read: {subtitle_text}')
 
     iso_file.close()
+    #out_file = open(f'{folder}/transcribe.json', "w+")
+    #json.dump(file_db, out_file, indent=6)
