@@ -272,29 +272,29 @@ def patch_subtitles():
 
 if __name__ == '__main__':
     iso_file = open(f'{folder}/{iso_name}', 'rb+')
-    patch_subtitles()
+    #patch_subtitles()
 
     file_db = []
 
     for file_index in range(0, 271):
         if file_index < 271:
-            text_inject = transcribe_real[file_index]['Text']
-            write_subtitle_file_address(file_index, subtitle_overall_offset + subtitle_text_offset)
-            initial_offset = read_subtitle_address_index(file_index)
+            #text_inject = transcribe_real[file_index]['Text']
+            #write_subtitle_file_address(file_index, subtitle_overall_offset + subtitle_text_offset)
+            #initial_offset = read_subtitle_address_index(file_index)
             subtitle_text, string_offset_read = read_string(file_index)
-            string_offset = write_string(file_index, text_inject)
-            subtitle_overall_offset += string_offset
+            #string_offset = write_string(file_index, text_inject)
+            subtitle_overall_offset += string_offset_read
             subtitle_text = subtitle_text.decode("utf-8")
         else:
             subtitle_text = f'SUBTITLE-ID-{file_index}'
 
-        #file_db.append({
-        #    "Id": file_index,
-        #    "TextId": subtitle_text,
-        #    "Text": subtitle_text
-        #})
-        #print(f'Subtitle Id: {file_index}, Offset: {hex(initial_offset)}, Text Read: {subtitle_text}')
+        file_db.append({
+            "Id": file_index,
+            "TextId": subtitle_text,
+            "Text": subtitle_text
+        })
+        print(f'Subtitle Id: {file_index}, Text Read: {subtitle_text}')
 
     iso_file.close()
-    #out_file = open(f'{folder}/transcribe.json', "w+")
-    #json.dump(file_db, out_file, indent=6)
+    out_file = open(f'{folder}/transcribe.json', "w+")
+    json.dump(file_db, out_file, indent=6)

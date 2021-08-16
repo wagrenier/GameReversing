@@ -80,18 +80,18 @@ def convert_characters(character):
 
 
 if __name__ == '__main__':
-    file_id = 40
+    file_name = 'ig_msg_' # 40
     sub = ['en', 'fr', 'de', 'es', 'it']
-    folder = 'D:/DecompressFiles/Fatal Frame Undub/EUROPE/extract'
+    folder = 'D:/Games/Emulator/XBOX/Games/Project Zero Mod Jap1.1/Media/msg'  # 'D:/DecompressFiles/Fatal Frame Undub/EUROPE/extract'
 
-    files = [0, 1, 2, 3, 4]
+    files = ['e', 'f', 'g', 'i', 'j', 's']
 
     for file in files:
-        curr_file = file + file_id
-        file_fill_path = f'{folder}/{curr_file}.out'
+        curr_file = f'{file_name}{file}'
+        file_fill_path = f'{folder}/{curr_file}.obj'
 
         subtitle_file = open(file_fill_path, 'rb')
-        subtitle_file_extract = open(f'{folder}/subtitles_{sub[file]}.bin', 'wb+')
+        subtitle_file_extract = open(f'{folder}/subtitles_{file}.bin', 'wb+')
 
         while 1:
             byte_s = subtitle_file.read(1)
@@ -106,5 +106,3 @@ if __name__ == '__main__':
 
         subtitle_file.close()
         subtitle_file_extract.close()
-
-
