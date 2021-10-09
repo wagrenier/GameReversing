@@ -130,5 +130,5 @@ if __name__ == '__main__':
 
     subtitle_file.close()
 
-    out_file = open(f'{folder}/transcribe.json', "w+")
+    out_file = open(f'{folder}/transcribe_fr.json', "w+")
     json.dump(file_db, out_file, indent=6)

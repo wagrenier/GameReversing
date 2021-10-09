@@ -135,9 +135,9 @@ def convert_characters(character):
 
 
 if __name__ == '__main__':
-    file_name = 20 #'ig_msg_' # 40
+    file_name = '3270_5' #'ig_msg_' # 40
     sub = ['en', 'fr', 'de', 'es', 'it']
-    folder = 'D:/DecompressFiles/Fatal Frame Undub/Japan/extract' # 'D:/DecompressFiles/Fatal Frame Undub/EUROPE/extract' 'D:/Games/Emulator/XBOX/Games/Project Zero Mod Jap1.1/Media/msg'
+    folder = 'D:/DecompressFiles/Zero2_JP' # 'D:/DecompressFiles/Fatal Frame Undub/EUROPE/extract' 'D:/Games/Emulator/XBOX/Games/Project Zero Mod Jap1.1/Media/msg'
 
     files = [f'{file_name}'] #['e', 'f', 'g', 'i', 'j', 's']
 
